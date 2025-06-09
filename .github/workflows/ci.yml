@@ -79,7 +79,7 @@ jobs:
         shell: bash
         if: runner.os == 'Windows'
 
-      - name: make fatsp  (MacOS)
+      - name: make fastp  (MacOS)
         run: bash -c 'make -j $(nproc)'
         if: runner.os == 'macOS'
 
@@ -92,5 +92,12 @@ jobs:
         shell: bash
         if: runner.os == 'Windows'  
 
-      - name: test
+      - name: test (Unix)
         run: chmod a+x ./fastp && ./fastp --version
+        if: runner.os != 'Windows'
+
+      - name: test (Windows)
+        run: ./fastp --version
+        shell: bash
+        if: runner.os == 'Windows'
+
