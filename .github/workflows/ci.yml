@@ -30,6 +30,11 @@ jobs:
         run: brew install automake autoconf coreutils nasm
         if: runner.os == 'macOS'
 
+      
+      - name: install build dependencies (Windows)
+        run: choco install make nasm strawberryperl --yes
+        if: runner.os == 'Windows'  
+
       - name: get deflate
         uses: actions/checkout@v3
         with:
@@ -37,9 +42,6 @@ jobs:
           path: src/libs/deflate
           ref: v1.22
 
-      - name: install build dependencies (Windows)
-        run: choco install make nasm strawberryperl --yes
-        if: runner.os == 'Windows'
 
       - name: build deflate
         run: |
