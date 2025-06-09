@@ -50,13 +50,16 @@ jobs:
           cmake --build build -j ${{ steps.cpu-cores.outputs.count }}
           sudo cmake --install build
           cd -
+        if: runner.os != 'Windows'
 
-      - name: get isa-l
-        uses: actions/checkout@v3
-        with:
-          repository: intel/isa-l
-          path: src/libs/isa-l
-          ref: v2.31.0
+      - name: build deflate (Windows)
+        run: |
+          cd src/libs/deflate
+          cmake -B build -DCMAKE_INSTALL_PREFIX=C:\install
+          cmake --build build --parallel
+          cmake --install build
+          cd ..
+        if: runner.os == 'Windows'
 
       - name: build isa-l
         run: |
@@ -66,6 +69,15 @@ jobs:
           make -j ${{ steps.cpu-cores.outputs.count }}
           sudo make install
           cd -
+        if: runner.os != 'Windows'
+
+      - name: build isa-l (Windows)
+        run: |
+          cd src/libs/isa-l
+          bash -c "./autogen.sh && ./configure && make -j $(nproc)"
+          cd ..
+        shell: bash
+        if: runner.os == 'Windows'
 
       - name: make fatsp  (MacOS)
         run: bash -c 'make -j $(nproc)'
@@ -74,6 +86,11 @@ jobs:
       - name: make fastp static (Ubuntu)
         run: bash -c 'make -j $(nproc) static'
         if: runner.os == 'Linux'
+
+      - name: make fastp (Windows)
+        run: bash -c 'make -j $(nproc) static'
+        shell: bash
+        if: runner.os == 'Windows'  
 
       - name: test
         run: chmod a+x ./fastp && ./fastp --version
